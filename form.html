@@ -409,7 +409,7 @@
     <nav class="fl-links">
       <a href="https://www.instagram.com/official_railfurs.id/" target="_blank" rel="noopener">Instagram</a>
       <a href="https://www.facebook.com/p/Indonesian-Railfurs-61557390134351/" target="_blank" rel="noopener">Facebook</a>
-      <a href="/cdn-cgi/l/email-protection#ef86818b80818a9c868e819d8e8683899a9d9cdddeddaf88828e8683c18c8082">Email</a>
+      <a href="/cdn-cgi/l/email-protection#dbb2b5bfb4b5bea8b2bab5a9bab2b7bdaea9a8e9eae99bbcb6bab2b7f5b8b4b6">Email</a>
     </nav>
   </footer>
 
@@ -452,11 +452,12 @@
     var token = sessionStorage.getItem(SESSION_KEY);
     if (!token) { redirectToGate('no_session'); return; }
 
-    // Token ada = user sudah login via OAuth, langsung tampilkan form
+    // Token ada = sudah login via OAuth, langsung tampilkan form
     document.getElementById('loadingOverlay').classList.add('hide');
   });
 
-  // Refresh/close = harus login ulang
+
+  // Refresh = sesi habis, harus login ulang
   window.addEventListener('beforeunload', function() {
     sessionStorage.removeItem(SESSION_KEY);
   });
@@ -576,7 +577,7 @@
     }
     document.getElementById('formSection').style.display='none';
     document.getElementById('heroSection').style.display='none';
-    
+    document.getElementById('countdownWrap').style.display='none';
     document.getElementById('successSection').classList.add('on');
     window.scrollTo({top:0,behavior:'smooth'});
   }
@@ -609,9 +610,7 @@
         var r=JSON.parse(xhr.responseText);
         if(r.success&&r.data&&r.data.url){
           uploadedImgUrl=r.data.url;
-          document.getElementById('imgUrl').value=uploadedImgUrl;
-          document.getElementById('upThumb').src=r.data.thumb?r.data.thumb.url:r.data.url;
-          document.getElementById('upFname').textContent=file.name+' ('+fmtSz(file.size)+')';
+          document.gmentById('upFname').textContent=file.name+' ('+fmtSz(file.size)+')';
           document.getElementById('upResult').classList.add('show');
           document.getElementById('upProgress').classList.remove('show');
           uploading=false;
@@ -660,4 +659,10 @@
       items.forEach(function(el,i){el.classList.toggle('active',i===3);});
     } else {
       var active=0;
-      SECS.forEach(function(id,i){var el=document.getElementB
+      SECS.forEach(function(id,i){var el=document.getElementById(id);if(el&&el.offsetTop<=y)active=i;});
+      items.forEach(function(el,i){el.classList.toggle('active',i===active);});
+    }
+  });
+</script>
+</body>
+</html>

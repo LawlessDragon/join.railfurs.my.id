@@ -69,7 +69,7 @@ export async function onRequest({ request, env }) {
     // 3. Buat sesi & redirect ke form
     const token = await makeToken(user.id, 'google', env.SESSION_SECRET);
     return Response.redirect(
-      `${base}/form.html?t=${encodeURIComponent(token)}`,
+      `${base}/form?t=${encodeURIComponent(token)}`,
       302
     );
 

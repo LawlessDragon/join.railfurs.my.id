@@ -457,10 +457,12 @@
       .then(function(r){ return r.json(); })
       .then(function(data) {
         if (!data.valid) { redirectToGate('session_expired'); return; }
-        // Sesi valid — tampilkan form
         document.getElementById('loadingOverlay').classList.add('hide');
       })
-      .catch(function() { redirectToGate('server_error'); });
+      .catch(function() {
+        // Kalau verify-session error tapi token ada, tetap tampilkan form
+        document.getElementById('loadingOverlay').classList.add('hide');
+      });
   });
 
   // Refresh/close = harus login ulang

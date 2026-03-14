@@ -451,7 +451,7 @@
     if (tokenFromUrl) {
       sessionStorage.setItem(SESSION_KEY, tokenFromUrl);
       // Hapus token dari URL (jangan sampai user share URL berisi token)
-      history.replaceState({}, document.title, '/form.html');
+      history.replaceState({}, document.title, '/form');
     }
 
     var token = sessionStorage.getItem(SESSION_KEY);

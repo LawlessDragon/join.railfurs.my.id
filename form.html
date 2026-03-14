@@ -187,11 +187,6 @@
 
 <iframe name="hif" style="display:none;" onload="onDone()"></iframe>
 
-<!-- Countdown pill -->
-<div class="countdown-wrap" id="countdownWrap">
-  <span>Sesi berakhir</span>
-  <span id="countdown">02:00</span>
-</div>
 
 <header>
   <img src="https://i.ibb.co.com/VpzHz4sj/logo-bg-transparan.png" alt="IRS"/>
@@ -462,42 +457,13 @@
       .then(function(r){ return r.json(); })
       .then(function(data) {
         if (!data.valid) { redirectToGate('session_expired'); return; }
-
         // Sesi valid — tampilkan form
         document.getElementById('loadingOverlay').classList.add('hide');
-        startCountdown(data.remaining);
       })
       .catch(function() { redirectToGate('server_error'); });
   });
 
-  /* ═══════════════════════════════════════════════
-     COUNTDOWN TIMER
-  ═══════════════════════════════════════════════ */
-  function startCountdown(remainingMs) {
-    var endTime = Date.now() + remainingMs;
-
-    function tick() {
-      var left = endTime - Date.now();
-      if (left <= 0) {
-        redirectToGate('session_expired');
-        return;
-      }
-      var m = Math.floor(left / 60000);
-      var s = Math.floor((left % 60000) / 1000);
-      document.getElementById('countdown').textContent =
-        String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
-
-      var wrap = document.getElementById('countdownWrap');
-      wrap.classList.remove('warn','danger');
-      if (left < 30000) wrap.classList.add('danger');
-      else if (left < 60000) wrap.classList.add('warn');
-
-      setTimeout(tick, 500);
-    }
-    tick();
-  }
-
-  // Refresh = sesi habis, harus login ulang
+  // Refresh/close = harus login ulang
   window.addEventListener('beforeunload', function() {
     sessionStorage.removeItem(SESSION_KEY);
   });
@@ -617,7 +583,7 @@
     }
     document.getElementById('formSection').style.display='none';
     document.getElementById('heroSection').style.display='none';
-    document.getElementById('countdownWrap').style.display='none';
+    
     document.getElementById('successSection').classList.add('on');
     window.scrollTo({top:0,behavior:'smooth'});
   }

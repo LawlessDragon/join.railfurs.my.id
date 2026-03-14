@@ -9,7 +9,7 @@ function toB64url(str) {
 }
 
 async function makeToken(userId, provider, secret) {
-  const expiry  = Date.now() + 2 * 60 * 1000;
+  const expiry  = Date.now() + 10 * 60 * 1000;
   const payload = toB64url(`${userId}|${provider}|${expiry}`);
 
   const encoder = new TextEncoder();

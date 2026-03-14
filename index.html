@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Verifikasi — Indonesian Railfurs</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co.com/RkTcW2bS/logo-bg-tp-kotak.png"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{--black:#000;--white:#fff;--g100:#f7f7f7;--g200:#e5e5e5;--g400:#9ca3af;--g600:#4b5563;--red:#dc2626;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html,body{font-family:'Inter',sans-serif;background:var(--white);color:var(--black);min-height:100vh;-ms-overflow-style:none;scrollbar-width:none;}
+    html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;}
+
+    header{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--white);border-bottom:1px solid var(--black);padding:14px 40px;display:flex;align-items:center;justify-content:space-between;height:61px;}
+    header img{height:32px;filter:brightness(0);}
+    header a{font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--g400);text-decoration:none;transition:color .2s;}
+    header a:hover{color:var(--black);}
+
+    .page{padding-top:61px;min-height:100vh;display:flex;flex-direction:column;}
+
+    /* Hero strip */
+    .hero{padding:64px 60px 48px;border-bottom:4px solid var(--black);}
+    .eyebrow{font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--g400);margin-bottom:10px;}
+    .hero h1{font-size:clamp(40px,6vw,80px);font-weight:900;line-height:.85;letter-spacing:-.04em;text-transform:uppercase;}
+    .hero h1 .ol{-webkit-text-stroke:2px var(--black);color:transparent;}
+    .hero-sub{margin-top:14px;font-size:13px;color:var(--g600);line-height:1.6;max-width:480px;}
+
+    /* Gate box */
+    .gate{flex:1;padding:56px 60px 80px;display:flex;gap:60px;align-items:flex-start;}
+
+    .gate-left{max-width:420px;}
+    .gate-label{font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--g400);margin-bottom:20px;}
+    .gate-title{font-size:20px;font-weight:900;letter-spacing:-.02em;text-transform:uppercase;margin-bottom:12px;}
+    .gate-desc{font-size:12px;color:var(--g600);line-height:1.7;margin-bottom:32px;}
+
+    /* Auth buttons */
+    .auth-buttons{display:flex;flex-direction:column;gap:12px;}
+
+    .btn-auth{
+      display:flex;align-items:center;gap:14px;
+      padding:16px 20px;border:2px solid var(--black);
+      background:var(--white);color:var(--black);
+      font-family:'Inter',sans-serif;font-size:12px;font-weight:700;
+      letter-spacing:.1em;text-transform:uppercase;
+      cursor:pointer;text-decoration:none;transition:background .15s,color .15s;
+      width:100%;
+    }
+    .btn-auth:hover{background:var(--black);color:var(--white);}
+    .btn-auth:hover .auth-icon svg{fill:var(--white);}
+    .btn-auth:hover .auth-icon svg path{stroke:var(--white);}
+    .auth-icon{width:24px;height:24px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+    .auth-icon svg{transition:fill .15s;}
+    .btn-auth-text{flex:1;}
+    .btn-auth-sub{font-size:9px;font-weight:400;letter-spacing:.05em;color:var(--g400);text-transform:none;margin-top:1px;display:block;}
+    .btn-auth:hover .btn-auth-sub{color:rgba(255,255,255,.6);}
+
+    .divider{display:flex;align-items:center;gap:12px;margin:4px 0;}
+    .divider span{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--g400);}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--g200);}
+
+    /* Info cards right */
+    .gate-right{flex:1;max-width:340px;}
+    .info-card{border:1px solid var(--g200);padding:20px 24px;margin-bottom:16px;}
+    .info-card-title{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px;}
+    .info-card-body{font-size:12px;color:var(--g600);line-height:1.7;}
+    .info-card-body strong{color:var(--black);}
+
+    .steps{counter-reset:step;}
+    .step{display:flex;gap:12px;margin-bottom:16px;}
+    .step-num{width:20px;height:20px;background:var(--black);color:var(--white);font-size:9px;font-weight:900;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+    .step-text{font-size:12px;color:var(--g600);line-height:1.6;padding-top:2px;}
+    .step-text strong{color:var(--black);}
+
+    /* Error banner */
+    .error-bar{display:none;margin:0 60px 0;padding:12px 20px;background:#fef2f2;border-left:3px solid var(--red);font-size:12px;font-weight:600;color:var(--red);}
+    .error-bar.show{display:block;}
+
+    footer{background:var(--black);color:var(--white);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;margin-top:auto;}
+    footer img{height:22px;filter:brightness(0) invert(1);opacity:.7;}
+    .fl{display:flex;gap:24px;}
+    .fl a{font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--g400);text-decoration:none;transition:color .2s;}
+    .fl a:hover{color:var(--white);}
+
+    @media(max-width:768px){
+      header{padding:14px 20px;}
+      .hero{padding:40px 20px 32px;}
+      .gate{flex-direction:column;padding:40px 20px 60px;gap:40px;}
+      .gate-right{max-width:100%;}
+      .error-bar{margin:0 20px;}
+      footer{padding:14px 20px;}
+    }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .hero{animation:fadeUp .5s ease both;}
+    .gate{animation:fadeUp .5s .1s ease both;}
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="https://i.ibb.co.com/VpzHz4sj/logo-bg-transparan.png" alt="IRS"/>
+  <a href="https://railfurs.my.id/">← Kembali ke beranda</a>
+</header>
+
+<div class="page">
+
+  <div class="hero">
+    <p class="eyebrow">Indonesian Railfurs — Pendaftaran Anggota</p>
+    <h1>VERIFIKASI <span class="ol">IDENTITAS</span></h1>
+    <p class="hero-sub">Sebelum mengisi formulir, masuk terlebih dahulu menggunakan akun Discord atau Google kamu.</p>
+  </div>
+
+  <div class="error-bar" id="errorBar"></div>
+
+  <div class="gate">
+
+    <!-- Kiri: tombol login -->
+    <div class="gate-left">
+      <p class="gate-label">Langkah 1 dari 2</p>
+      <p class="gate-title">Pilih Metode Masuk</p>
+      <p class="gate-desc">
+        Login ini berfungsi sebagai verifikasi bahwa kamu adalah pengguna nyata.
+        Data akun kamu <strong>tidak</strong> disimpan — hanya digunakan untuk membuka akses formulir.
+      </p>
+
+      <div class="auth-buttons">
+        <!-- Discord -->
+        <a href="/discord-auth" class="btn-auth">
+          <div class="auth-icon">
+            <!-- Discord logo SVG (official shape, BW) -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="#000">
+              <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+            </svg>
+          </div>
+          <div class="btn-auth-text">
+            Masuk dengan Discord
+            <span class="btn-auth-sub">discord.com — wajib punya akun Discord</span>
+          </div>
+        </a>
+
+        <div class="divider"><span>atau</span></div>
+
+        <!-- Google -->
+        <a href="/google-auth" class="btn-auth">
+          <div class="auth-icon">
+            <!-- Google "G" SVG (BW version) -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22">
+              <path fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"
+                d="M21.6 12.2c0-.6-.1-1.2-.2-1.8H12v3.4h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.1z"/>
+              <path fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"
+                d="M12 22c2.7 0 5-0.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6C4.7 19.9 8.1 22 12 22z"/>
+              <path fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"
+                d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1A10 10 0 0 0 2 12c0 1.6.4 3.2 1.1 4.6L6.4 14z"/>
+              <path fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"
+                d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.8-2.8C16.9 2.9 14.6 2 12 2 8.1 2 4.7 4.1 3.1 7.4l3.3 2.6C7.2 7.6 9.4 5.9 12 5.9z"/>
+            </svg>
+          </div>
+          <div class="btn-auth-text">
+            Masuk dengan Google
+            <span class="btn-auth-sub">google.com — untuk yang tidak punya Discord</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Kanan: info -->
+    <div class="gate-right">
+
+      <div class="info-card">
+        <p class="info-card-title">⏱ Akses Berlaku 2 Menit</p>
+        <p class="info-card-body">Setelah login berhasil, kamu punya <strong>2 menit</strong> untuk mengisi dan mengirimkan formulir. Jika waktu habis atau halaman di-refresh, kamu akan diminta login ulang.</p>
+      </div>
+
+      <p style="font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--g400);margin-bottom:12px;">Alur Pendaftaran</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>Login</strong> — verifikasi via Discord atau Google</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text"><strong>Isi formulir</strong> — data identitas, lokasi, dan komunitas</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>Selesaikan Captcha</strong> — verifikasi manual sebelum kirim</div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-text"><strong>Tim IRS</strong> akan menghubungimu via media sosial yang didaftarkan</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <img src="https://i.ibb.co.com/VpzHz4sj/logo-bg-transparan.png" alt="IRS"/>
+    <nav class="fl">
+      <a href="https://www.instagram.com/official_railfurs.id/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.facebook.com/p/Indonesian-Railfurs-61557390134351/" target="_blank" rel="noopener">Facebook</a>
+      <a href="/cdn-cgi/l/email-protection#01686f656e6f647268606f7360686d6774737233303341666c60686d2f626e6c">Email</a>
+    </nav>
+  </footer>
+
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Tampilkan pesan error dari URL jika ada
+  var errors = {
+    no_code:        'Proses login dibatalkan.',
+    token_failed:   'Gagal memproses login. Coba lagi.',
+    user_failed:    'Gagal membaca data akun. Coba lagi.',
+    server_error:   'Terjadi kesalahan server. Coba beberapa saat lagi.',
+    session_expired:'Sesi habis. Silakan login ulang.',
+  };
+  var params = new URLSearchParams(window.location.search);
+  var err    = params.get('error');
+  if (err && errors[err]) {
+    var bar = document.getElementById('errorBar');
+    bar.textContent = '⚠ ' + errors[err];

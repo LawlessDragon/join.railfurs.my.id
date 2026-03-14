@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+  <title>Formulir Pendaftaran — Indonesian Railfurs</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co.com/RkTcW2bS/logo-bg-tp-kotak.png"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Cloudflare Turnstile -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <style>
+    :root{--black:#000;--white:#fff;--g100:#f7f7f7;--g200:#e5e5e5;--g400:#9ca3af;--g600:#4b5563;--red:#dc2626;--green:#16a34a;--orange:#f59e0b;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html,body{font-family:'Inter',sans-serif;background:var(--white);color:var(--black);-ms-overflow-style:none;scrollbar-width:none;}
+    html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;}
+
+    /* LOADING OVERLAY */
+    #loadingOverlay{position:fixed;inset:0;background:var(--white);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+    #loadingOverlay.hide{display:none;}
+    .loading-logo{height:40px;filter:brightness(0);opacity:.3;animation:pulse 1.5s ease infinite;}
+    .loading-text{font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--g400);}
+    @keyframes pulse{0%,100%{opacity:.3}50%{opacity:.8}}
+
+    header{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--white);border-bottom:1px solid var(--black);padding:14px 40px;display:flex;align-items:center;justify-content:space-between;height:61px;}
+    header img{height:32px;filter:brightness(0);}
+    header span{font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--g400);}
+
+    /* COUNTDOWN PILL */
+    .countdown-wrap{
+      position:fixed;top:71px;right:20px;z-index:200;
+      display:flex;align-items:center;gap:8px;
+      background:var(--black);color:var(--white);
+      padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+      transition:background .3s;
+    }
+    .countdown-wrap.warn{background:var(--orange);}
+    .countdown-wrap.danger{background:var(--red);animation:countBlink .5s ease infinite;}
+    @keyframes countBlink{0%,100%{opacity:1}50%{opacity:.6}}
+    #countdown{font-size:13px;font-weight:900;letter-spacing:.05em;font-variant-numeric:tabular-nums;}
+
+    .page{padding-top:61px;}
+    .hero{padding:48px 60px 32px;border-bottom:4px solid var(--black);}
+    .hero-eyebrow{font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--g400);margin-bottom:10px;}
+    .hero h1{font-size:clamp(48px,7vw,96px);font-weight:900;line-height:.85;letter-spacing:-.04em;text-transform:uppercase;display:flex;align-items:baseline;gap:.2em;flex-wrap:wrap;}
+    .hero h1 .outline{-webkit-text-stroke:2px var(--black);color:transparent;}
+    .hero-sub{margin-top:16px;font-size:13px;color:var(--g600);line-height:1.6;max-width:520px;}
+
+    .form-body{display:grid;grid-template-columns:260px 1fr;align-items:start;}
+    .form-sidebar{position:sticky;top:61px;height:calc(100vh - 61px);border-right:1px solid var(--g200);padding:40px 32px;overflow-y:auto;}
+    .sb{margin-bottom:32px;cursor:pointer;}
+    .sb .n{font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--g400);margin-bottom:4px;}
+    .sb .t{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--g400);transition:color .2s;}
+    .sb.active .t,.sb:hover .t{color:var(--black);}
+    .sb .bar{width:24px;height:2px;background:var(--g200);margin-top:6px;transition:background .3s,width .3s;}
+    .sb.active .bar{background:var(--black);width:40px;}
+    .form-main{padding:48px 60px 80px;max-width:680px;}
+
+    .fs{margin-bottom:64px;padding-bottom:64px;border-bottom:1px solid var(--g200);}
+    .fs:last-of-type{border-bottom:none;}
+    .sh{display:flex;align-items:baseline;gap:16px;margin-bottom:40px;}
+    .sn{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--g400);flex-shrink:0;}
+    .st{font-size:22px;font-weight:900;letter-spacing:-.02em;text-transform:uppercase;}
+
+    .field{margin-bottom:36px;}
+    .fl{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--black);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+    .br{font-size:9px;padding:2px 6px;background:var(--black);color:var(--white);letter-spacing:.1em;font-weight:700;}
+    .bo{font-size:9px;padding:2px 6px;background:var(--g200);color:var(--g600);letter-spacing:.1em;font-weight:700;}
+    .fh{font-size:11px;color:var(--g400);margin-bottom:10px;line-height:1.5;}
+    input[type=text],input[type=number],textarea,select{width:100%;background:transparent;border:none;border-bottom:2px solid var(--black);padding:12px 0;font-family:'Inter',sans-serif;font-size:16px;color:var(--black);outline:none;transition:border-color .15s,border-width .15s;appearance:none;-webkit-appearance:none;border-radius:0;}
+    input[type=text]:focus,input[type=number]:focus,textarea:focus,select:focus{border-bottom-width:3px;}
+    input::placeholder,textarea::placeholder{color:var(--g400);font-size:14px;}
+    textarea{resize:vertical;min-height:100px;}
+    .field.err input,.field.err textarea,.field.err select{border-bottom-color:var(--red);}
+    .fe{display:none;margin-top:8px;font-size:11px;font-weight:600;color:var(--red);letter-spacing:.05em;}
+    .field.err .fe{display:block;}
+    .sw{position:relative;}
+    .sw::after{content:'↓';position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;}
+    select{padding-right:28px;cursor:pointer;}
+
+    /* UPLOAD */
+    .upload-zone{border:2px dashed var(--g200);padding:28px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative;}
+    .upload-zone:hover,.upload-zone.drag{border-color:var(--black);background:var(--g100);}
+    .upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+    .upload-icon{font-size:28px;margin-bottom:8px;}
+    .upload-label{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--black);}
+    .upload-sub{font-size:10px;color:var(--g400);margin-top:4px;}
+    .upload-progress{display:none;margin-top:16px;}
+    .upload-progress.show{display:block;}
+    .prog-bar-wrap{height:2px;background:var(--g200);margin-top:8px;overflow:hidden;}
+    .prog-bar{height:100%;background:var(--black);width:0%;transition:width .3s;}
+    .prog-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g400);display:flex;justify-content:space-between;}
+    .upload-result{display:none;margin-top:16px;}
+    .upload-result.show{display:flex;align-items:center;gap:12px;}
+    .upload-thumb{width:56px;height:56px;object-fit:cover;border:1px solid var(--g200);}
+    .upload-info{flex:1;}
+    .upload-ok{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green);}
+    .upload-fname{font-size:11px;color:var(--g600);margin-top:2px;word-break:break-all;}
+    .upload-remove{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--red);cursor:pointer;border:none;background:none;padding:0;margin-top:6px;display:block;}
+    .upload-error{display:none;margin-top:12px;font-size:11px;font-weight:600;color:var(--red);}
+    .upload-error.show{display:block;}
+
+    /* TURNSTILE */
+    .turnstile-wrap{margin-bottom:24px;position:relative;}
+    .turnstile-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+    .turnstile-error{display:none;margin-top:8px;font-size:11px;font-weight:600;color:var(--red);}
+    .turnstile-error.show{display:block;}
+
+    .ebanner{display:none;margin-bottom:24px;padding:14px 18px;background:#fef2f2;border-left:3px solid var(--red);font-size:12px;font-weight:600;color:var(--red);letter-spacing:.05em;}
+    .ebanner.on{display:block;}
+
+    .sub-block{padding-top:8px;}
+    .btn{display:inline-flex;align-items:center;gap:12px;background:var(--black);color:var(--white);border:none;padding:18px 48px;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;cursor:pointer;transition:background .2s,transform .1s;}
+    .btn:hover{background:#222;}
+    .btn:active{transform:scale(.98);}
+    .btn:disabled{opacity:.4;cursor:not-allowed;}
+    .btn .arr{font-size:18px;transition:transform .2s;}
+    .btn:hover:not(:disabled) .arr{transform:translateX(4px);}
+    .sub-note{margin-top:14px;font-size:11px;color:var(--g400);line-height:1.6;}
+
+    /* SUCCESS */
+    .success{display:none;min-height:calc(100vh - 115px);padding:64px 60px 80px;}
+    .success.on{display:grid;grid-template-columns:1fr 380px;gap:60px;align-items:start;}
+    .big{font-size:clamp(56px,8vw,120px);font-weight:900;line-height:.82;letter-spacing:-.04em;text-transform:uppercase;margin-bottom:32px;}
+    .big .ol{-webkit-text-stroke:2px var(--black);color:transparent;display:block;}
+    .sdiv{width:60px;height:4px;background:var(--black);margin-bottom:28px;}
+    .msg{font-size:14px;color:var(--g600);line-height:1.9;max-width:440px;margin-bottom:40px;}
+    .msg strong{color:var(--black);font-weight:700;}
+    .back{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--black);text-decoration:none;border-bottom:2px solid var(--black);padding-bottom:3px;transition:opacity .2s;}
+    .back:hover{opacity:.5;}
+    .success-right{display:flex;flex-direction:column;gap:20px;}
+    .badge{border:2px solid var(--black);background:var(--white);overflow:hidden;}
+    .badge-header{background:var(--black);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;}
+    .badge-header img{height:20px;filter:brightness(0) invert(1);}
+    .badge-header-label{font-size:8px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.5);}
+    .badge-photo-wrap{padding:20px;display:flex;align-items:center;gap:20px;}
+    .badge-photo{width:100px;height:100px;object-fit:cover;flex-shrink:0;border:2px solid var(--g200);}
+    .badge-photo-fallback{width:100px;height:100px;flex-shrink:0;border:2px solid var(--g200);display:flex;align-items:center;justify-content:center;background:var(--g100);}
+    .badge-photo-fallback img{width:56px;height:auto;filter:brightness(0);opacity:.2;}
+    .badge-meta{flex:1;}
+    .badge-name{font-size:18px;font-weight:900;letter-spacing:-.02em;text-transform:uppercase;line-height:1;margin-bottom:6px;}
+    .badge-sub{font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--g400);}
+    .badge-footer{border-top:1px solid var(--g200);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+    .badge-id{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--g400);}
+    .badge-status{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;background:var(--black);color:var(--white);padding:3px 8px;}
+    .wa-box{border:2px solid var(--black);padding:20px 24px;}
+    .wa-box-top{display:flex;align-items:center;gap:14px;margin-bottom:12px;}
+    .wa-icon{width:38px;height:38px;flex-shrink:0;}
+    .wa-title{font-size:12px;font-weight:900;letter-spacing:.02em;text-transform:uppercase;}
+    .wa-sub{font-size:11px;color:var(--g600);line-height:1.6;margin-bottom:16px;}
+    .wa-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--black);color:var(--white);text-decoration:none;padding:13px 20px;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;transition:background .2s;}
+    .wa-btn:hover{background:#222;}
+    .wa-btn-disabled{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--g100);color:var(--g400);border:1px solid var(--g200);padding:13px 20px;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;cursor:not-allowed;}
+
+    footer{background:var(--black);color:var(--white);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;}
+    footer img{height:22px;filter:brightness(0) invert(1);opacity:.7;}
+    .fl-links{display:flex;gap:24px;}
+    .fl-links a{font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--g400);text-decoration:none;transition:color .2s;}
+    .fl-links a:hover{color:var(--white);}
+
+    @media(max-width:900px){.success.on{grid-template-columns:1fr;gap:40px;}.success-right{max-width:420px;}}
+    @media(max-width:768px){
+      header{padding:14px 20px;}.hero{padding:32px 20px 24px;}
+      .form-body{grid-template-columns:1fr;}.form-sidebar{display:none;}
+      .form-main{padding:32px 20px 60px;max-width:100%;}
+      .success{padding:40px 20px 60px;}
+      footer{padding:14px 20px;}.sh{flex-direction:column;gap:4px;}
+      .countdown-wrap{top:71px;right:10px;}
+    }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .hero,.form-body{animation:fadeUp .5s ease both;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .success.on .success-left{animation:fadeIn .6s ease both;}
+    .success.on .success-right{animation:fadeIn .6s .15s ease both;}
+    @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+    .shake{animation:shake .35s ease;}
+  </style>
+</head>
+<body>
+
+<!-- Loading overlay — tampil saat verifikasi sesi -->
+<div id="loadingOverlay">
+  <img class="loading-logo" src="https://i.ibb.co.com/VpzHz4sj/logo-bg-transparan.png" alt="IRS"/>
+  <p class="loading-text">Memverifikasi sesi…</p>
+</div>
+
+<iframe name="hif" style="display:none;" onload="onDone()"></iframe>
+
+<!-- Countdown pill -->
+<div class="countdown-wrap" id="countdownWrap">
+  <span>Sesi berakhir</span>
+  <span id="countdown">02:00</span>
+</div>
+
+<header>
+  <img src="https://i.ibb.co.com/VpzHz4sj/logo-bg-transparan.png" alt="IRS"/>
+  <span>Member Registration</span>
+</header>
+
+<div class="page">
+
+  <div class="hero" id="heroSection">
+    <p class="hero-eyebrow">Indonesian Railfurs — Open Registration</p>
+    <h1><span>DAFTAR</span><span class="outline">ANGGOTA</span></h1>
+    <p class="hero-sub">Isi formulir di bawah ini untuk mendaftar sebagai anggota komunitas Indonesian Railfurs. Semua data yang kamu masukkan akan dijaga kerahasiaannya.</p>
+  </div>
+
+  <div class="form-body" id="formSection">
+    <aside class="form-sidebar">
+      <div class="sb active" onclick="goTo('s1')"><div class="n">01</div><div class="t">Identitas</div><div class="bar"></div></div>
+      <div class="sb" onclick="goTo('s2')"><div class="n">02</div><div class="t">Lokasi &amp; Rail</div><div class="bar"></div></div>
+      <div class="sb" onclick="goTo('s3')"><div class="n">03</div><div class="t">Komunitas</div><div class="bar"></div></div>
+      <div class="sb" onclick="goTo('s4')"><div class="n">04</div><div class="t">Submit</div><div class="bar"></div></div>
+    </aside>
+
+    <main class="form-main">
+      <div class="ebanner" id="eb">⚠ Ada beberapa field wajib yang belum diisi. Mohon lengkapi terlebih dahulu.</div>
+
+      <form action="https://docs.google.com/forms/d/e/1FAIpQLSec3c5kcaTnbn_Q4RF38pA8PG93w-uf1eGInUt1U24r85a_OA/formResponse"
+        method="POST" target="hif" onsubmit="return doSubmit(event)" novalidate>
+
+        <input type="hidden" name="entry.498307468" id="imgUrl"/>
+
+        <!-- 01 -->
+        <div class="fs" id="s1">
+          <div class="sh"><span class="sn">01</span><span class="st">Identitas</span></div>
+          <div class="field" id="f-nama">
+            <div class="fl">Nama Lengkap <span class="br">WAJIB</span></div>
+            <div class="fh">Nama asli kamu (bukan fursona)</div>
+            <input type="text" name="entry.1511557657" placeholder="Contoh: Ilham Maulana" oninput="clr('f-nama')"/>
+            <div class="fe">Nama lengkap wajib diisi.</div>
+          </div>
+          <div class="field" id="f-fursona">
+            <div class="fl">Nama Fursona / OC <span class="br">WAJIB</span></div>
+            <div class="fh">Nama karakter furry atau original character kamu</div>
+            <input type="text" name="entry.1434883461" placeholder="Contoh: Lawless" oninput="clr('f-fursona')"/>
+            <div class="fe">Nama fursona / OC wajib diisi.</div>
+          </div>
+          <div class="field" id="f-sosmed">
+            <div class="fl">Media Sosial <span class="br">WAJIB</span></div>
+            <div class="fh">Username atau link akun utama — Twitter/X, Telegram, Instagram, dll</div>
+            <input type="text" name="entry.613166217" placeholder="Contoh: @BlueLawless" oninput="clr('f-sosmed')"/>
+            <div class="fe">Media sosial wajib diisi.</div>
+          </div>
+          <div class="field" id="f-usia">
+            <div class="fl">Usia <span class="br">WAJIB</span></div>
+            <div class="fh">Usia kamu saat ini (minimal 13 tahun)</div>
+            <input type="number" name="entry.1763410197" placeholder="Contoh: 22" min="13" max="99" oninput="clr('f-usia')"/>
+            <div class="fe">Usia wajib diisi (minimal 13 tahun).</div>
+          </div>
+        </div>
+
+        <!-- 02 -->
+        <div class="fs" id="s2">
+          <div class="sh"><span class="sn">02</span><span class="st">Lokasi &amp; Railfanning</span></div>
+          <div class="field" id="f-kota">
+            <div class="fl">Asal Kota / Domisili <span class="br">WAJIB</span></div>
+            <div class="fh">Kota tempat tinggal kamu sekarang</div>
+            <input type="text" name="entry.767153576" placeholder="Contoh: Bekasi" oninput="clr('f-kota')"/>
+            <div class="fe">Asal kota wajib diisi.</div>
+          </div>
+          <div class="field" id="f-daop">
+            <div class="fl">Wilayah Operasi <span class="br">WAJIB</span></div>
+            <div class="fh">Area Daop atau Divre tempat kamu sering railfanning</div>
+            <div class="sw">
+              <select name="entry.860052310" onchange="clr('f-daop')">
+                <option value="" disabled selected>— Pilih Daop / Divre —</option>
+                <optgroup label="Jawa">
+                  <option>Daop 1 Jakarta</option><option>Daop 2 Bandung</option>
+                  <option>Daop 3 Cirebon</option><option>Daop 4 Semarang</option>
+                  <option>Daop 5 Purwokerto</option><option>Daop 6 Yogyakarta</option>
+                  <option>Daop 7 Madiun</option><option>Daop 8 Surabaya</option>
+                  <option>Daop 9 Jember</option>
+                </optgroup>
+                <optgroup label="Sumatera">
+                  <option>Divre I Sumatera Utara</option><option>Divre II Sumatera Barat</option>
+                  <option>Divre III Palembang</option><option>Divre IV Tanjungkarang</option>
+                </optgroup>
+                <optgroup label="Lainnya"><option>Non-Daop/Divre</option></optgroup>
+              </select>
+            </div>
+            <div class="fe">Wilayah operasi wajib dipilih.</div>
+          </div>
+          <div class="field">
+            <div class="fl">Base Railfanning <span class="bo">OPSIONAL</span></div>
+            <div class="fh">Lokasi hunting atau stasiun terdekat yang sering kamu kunjungi</div>
+            <input type="text" name="entry.1696519431" placeholder="Contoh: Cibitung, Stasiun Gambir"/>
+          </div>
+        </div>
+
+        <!-- 03 -->
+        <div class="fs" id="s3">
+          <div class="sh"><span class="sn">03</span><span class="st">Komunitas &amp; Referensi</span></div>
+          <div class="field">
+            <div class="fl">Referensi / Mutual IRS <span class="bo">OPSIONAL</span></div>
+            <div class="fh">Siapa yang mengenalkan kamu ke IRS, atau tau IRS dari mana?</div>
+            <input type="text" name="entry.1889290369" placeholder="Contoh: agna mbuli, Twitter, dll"/>
+          </div>
+          <div class="field">
+            <div class="fl">Riwayat Komunitas &amp; Fandom Lain <span class="bo">OPSIONAL</span></div>
+            <div class="fh">Role, pengalaman organisasi, atau fandom lain yang pernah kamu ikuti</div>
+            <textarea name="entry.573923883" placeholder="Contoh: dancer pawai 2023, moderator komunitas X, dll"></textarea>
+          </div>
+          <div class="field">
+            <div class="fl">Foto Fursona / OC <span class="bo">OPSIONAL</span></div>
+            <div class="fh">Upload foto fursona atau OC kamu. Format JPG, PNG, GIF — maks. 32MB.</div>
+            <div class="upload-zone" id="dropZone">
+              <input type="file" id="imgFile" accept="image/*" onchange="onFileChange(this)"/>
+              <div class="upload-icon">📎</div>
+              <div class="upload-label">Klik atau seret gambar ke sini</div>
+              <div class="upload-sub">JPG · PNG · GIF · WebP · Maks 32MB</div>
+            </div>
+            <div class="upload-progress" id="upProgress">
+              <div class="prog-label"><span id="progStatus">Mengupload…</span><span id="progPct">0%</span></div>
+              <div class="prog-bar-wrap"><div class="prog-bar" id="progBar"></div></div>
+            </div>
+            <div class="upload-result" id="upResult">
+              <img class="upload-thumb" id="upThumb" src="" alt="preview"/>
+              <div class="upload-info">
+                <div class="upload-ok">✓ Upload Berhasil</div>
+                <div class="upload-fname" id="upFname"></div>
+                <button type="button" class="upload-remove" onclick="removeImg()">✕ Hapus &amp; Ganti</button>
+              </div>
+            </div>
+            <div class="upload-error" id="upError"></div>
+          </div>
+        </div>
+
+        <!-- 04 Submit + Turnstile -->
+        <div id="s4" class="sub-block">
+          <!-- Cloudflare Turnstile — MANUAL (checkbox), bukan invisible -->
+          <div class="turnstile-wrap">
+            <div class="fl" style="margin-bottom:10px;">Verifikasi Keamanan <span class="br">WAJIB</span></div>
+            <!-- Widget Turnstile -->
+            <div class="cf-turnstile"
+              data-sitekey="GANTI_DENGAN_TURNSTILE_SITE_KEY"
+              data-callback="onTurnstileOk"
+              data-error-callback="onTurnstileErr"
+              data-theme="light"
+              data-size="normal">
+            </div>
+            <div class="turnstile-error" id="tsError">Selesaikan verifikasi keamanan terlebih dahulu.</div>
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn">
+            <span>Submit Pendaftaran</span><span class="arr">→</span>
+          </button>
+          <p class="sub-note">
+            Data kamu akan tersimpan ke database IRS.<br/>
+            Field bertanda <strong>WAJIB</strong> harus diisi sebelum submit.
+          </p>
+        </div>
+
+      </form>
+    </main>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success" id="successSection">
+    <div class="success-left">
+      <div class="big">TERIMA<span class="ol">KASIH</span></div>
+      <div class="sdiv"></div>
+      <p class="msg">
+        Formulir pendaftaranmu sudah kami terima dengan baik.<br/>
+        <strong>Tim IRS akan menghubungimu</strong> dalam waktu dekat melalui akun media sosial yang kamu daftarkan.<br/><br/>
+        Sambil menunggu, jangan lupa follow akun resmi kami ya — sampai jumpa di peron! 🚂
+      </p>
+      <a href="https://railfurs.my.id/" class="back">← Kembali ke beranda</a>
+    </div>
+    <div class="success-right">
+      <div class="badge">
+        <div class="badge-header">
+          <img src="https://i.ibb.co.com/VpzHz4sj/logo-bg-transparan.png" alt="IRS"/>
+          <span class="badge-header-label">Member Card</span>
+        </div>
+        <div class="badge-photo-wrap">
+          <img class="badge-photo" id="badgePhoto" src="" alt="" style="display:none;"/>
+          <div class="badge-photo-fallback" id="badgeFallback">
+            <img src="https://i.ibb.co.com/VpzHz4sj/logo-bg-transparan.png" alt="IRS"/>
+          </div>
+          <div class="badge-meta">
+            <div class="badge-sub" style="margin-bottom:4px;">Indonesian Railfurs</div>
+            <div class="badge-name" id="badgeName">—</div>
+            <div class="badge-sub" id="badgeSosmed" style="margin-top:6px;font-size:9px;">—</div>
+          </div>
+        </div>
+        <div class="badge-footer">
+          <span class="badge-id" id="badgeId">IRS-####</span>
+          <span class="badge-status">Pending Review</span>
+        </div>
+      </div>
+      <div class="wa-box">
+        <div class="wa-box-top">
+          <div class="wa-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="38" height="38">
+              <circle cx="16" cy="16" r="16" fill="#000"/>
+              <path fill="#fff" d="M22.9 9.1A9.7 9.7 0 0 0 16 6.4a9.8 9.8 0 0 0-8.4 14.8L6 26l4.9-1.6A9.8 9.8 0 0 0 16 25.6a9.8 9.8 0 0 0 6.9-16.5zm-6.9 15a8.1 8.1 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.1 8.1 0 1 1 16 24.1zm4.5-6c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1a6.6 6.6 0 0 1-3.3-2.9c-.1-.2 0-.4.1-.5l.4-.5.2-.4V14c-.1-.2-.5-1.3-.7-1.7-.2-.4-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.5 4 5 5 0 0 0 2.9.5 2.7 2.7 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/>
+            </svg>
+          </div>
+          <div class="wa-title">Grup WhatsApp IRS</div>
+        </div>
+        <p class="wa-sub">Bergabung ke grup WhatsApp IRS untuk mendapatkan informasi lebih lanjut, update terbaru, jadwal acara, dan terhubung langsung dengan anggota komunitas.</p>
+        <div class="wa-btn-disabled">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Link Grup Segera Hadir
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <img src="https://i.ibb.co.com/VpzHz4sj/logo-bg-transparan.png" alt="IRS"/>
+    <nav class="fl-links">
+      <a href="https://www.instagram.com/official_railfurs.id/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.facebook.com/p/Indonesian-Railfurs-61557390134351/" target="_blank" rel="noopener">Facebook</a>
+      <a href="/cdn-cgi/l/email-protection#ef86818b80818a9c868e819d8e8683899a9d9cdddeddaf88828e8683c18c8082">Email</a>
+    </nav>
+  </footer>
+
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  /* ═══════════════════════════════════════════════
+     SESSION CHECK
+  ═══════════════════════════════════════════════ */
+  var SESSION_KEY = 'irs_session';
+
+  // Decode payload base64url (client-side, hanya untuk ambil expiry)
+  function decodePayload(token) {
+    try {
+      var payload = token.substring(0, token.lastIndexOf('.'));
+      var b64 = payload.replace(/-/g,'+').replace(/_/g,'/');
+      while(b64.length%4) b64+='=';
+      var decoded = atob(b64);
+      var parts = decoded.split('|');
+      return { userId: parts[0], provider: parts[1], expiry: parseInt(parts[2]) };
+    } catch(e) { return null; }
+  }
+
+  // Redirect ke gate jika sesi tidak valid
+  function redirectToGate(reason) {
+    sessionStorage.removeItem(SESSION_KEY);
+    window.location.href = '/?error=' + (reason || 'session_expired');
+  }
+
+  window.addEventListener('load', function() {
+    // Ambil token dari URL (setelah OAuth callback)
+    var urlParams = new URLSearchParams(window.location.search);
+    var tokenFromUrl = urlParams.get('t');
+    if (tokenFromUrl) {
+      sessionStorage.setItem(SESSION_KEY, tokenFromUrl);
+      // Hapus token dari URL (jangan sampai user share URL berisi token)
+      history.replaceState({}, document.title, '/form.html');
+    }
+
+    var token = sessionStorage.getItem(SESSION_KEY);
+    if (!token) { redirectToGate('no_session'); return; }
+
+    // Verifikasi ke server
+    fetch('/verify-session?token=' + encodeURIComponent(token))
+      .then(function(r){ return r.json(); })
+      .then(function(data) {
+        if (!data.valid) { redirectToGate('session_expired'); return; }
+
+        // Sesi valid — tampilkan form
+        document.getElementById('loadingOverlay').classList.add('hide');
+        startCountdown(data.remaining);
+      })
+      .catch(function() { redirectToGate('server_error'); });
+  });
+
+  /* ═══════════════════════════════════════════════
+     COUNTDOWN TIMER
+  ═══════════════════════════════════════════════ */
+  function startCountdown(remainingMs) {
+    var endTime = Date.now() + remainingMs;
+
+    function tick() {
+      var left = endTime - Date.now();
+      if (left <= 0) {
+        redirectToGate('session_expired');
+        return;
+      }
+      var m = Math.floor(left / 60000);
+      var s = Math.floor((left % 60000) / 1000);
+      document.getElementById('countdown').textContent =
+        String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+
+      var wrap = document.getElementById('countdownWrap');
+      wrap.classList.remove('warn','danger');
+      if (left < 30000) wrap.classList.add('danger');
+      else if (left < 60000) wrap.classList.add('warn');
+
+      setTimeout(tick, 500);
+    }
+    tick();
+  }
+
+  // Refresh = sesi habis, harus login ulang
+  window.addEventListener('beforeunload', function() {
+    sessionStorage.removeItem(SESSION_KEY);
+  });
+
+  /* ═══════════════════════════════════════════════
+     TURNSTILE
+  ═══════════════════════════════════════════════ */
+  var tsToken = null;
+
+  function onTurnstileOk(token) {
+    tsToken = token;
+    document.getElementById('tsError').classList.remove('show');
+  }
+  function onTurnstileErr() {
+    tsToken = null;
+  }
+
+  /* ═══════════════════════════════════════════════
+     FORM VALIDATION & SUBMIT
+  ═══════════════════════════════════════════════ */
+  var sent = false, uploading = false, uploadedImgUrl = '';
+
+  var REQ = [
+    {id:'f-nama',    s:'input',  ok:function(v){return v.trim()!=='';}},
+    {id:'f-fursona', s:'input',  ok:function(v){return v.trim()!=='';}},
+    {id:'f-sosmed',  s:'input',  ok:function(v){return v.trim()!=='';}},
+    {id:'f-usia',    s:'input',  ok:function(v){return v.trim()!==''&&parseInt(v)>=13;}},
+    {id:'f-kota',    s:'input',  ok:function(v){return v.trim()!=='';}},
+    {id:'f-daop',    s:'select', ok:function(v){return v!=='';}}
+  ];
+
+  function clr(id){
+    var el=document.getElementById(id);
+    if(el) el.classList.remove('err');
+    if(!document.querySelector('.field.err')) document.getElementById('eb').classList.remove('on');
+  }
+
+  async function doSubmit(e) {
+    e.preventDefault();
+    if (uploading) return false;
+
+    // 1. Cek Turnstile
+    if (!tsToken) {
+      document.getElementById('tsError').classList.add('show');
+      document.getElementById('s4').scrollIntoView({behavior:'smooth',block:'center'});
+      return false;
+    }
+
+    // 2. Validasi field wajib
+    var bad = false, first = null;
+    REQ.forEach(function(r) {
+      var w = document.getElementById(r.id), inp = w.querySelector(r.s);
+      if (!r.ok(inp.value)) { w.classList.add('err'); bad=true; if(!first) first=w; }
+    });
+    if (bad) {
+      document.getElementById('eb').classList.add('on');
+      var b = document.getElementById('submitBtn');
+      b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
+      first.scrollIntoView({behavior:'smooth',block:'center'});
+      return false;
+    }
+
+    // 3. Verifikasi Turnstile di server
+    var btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.querySelector('span').textContent = 'Memverifikasi…';
+
+    try {
+      var tsRes = await fetch('/verify-turnstile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cfToken: tsToken })
+      });
+      var tsData = await tsRes.json();
+
+      if (!tsData.success) {
+        document.getElementById('tsError').textContent = 'Verifikasi gagal. Coba selesaikan captcha lagi.';
+        document.getElementById('tsError').classList.add('show');
+        if (typeof turnstile !== 'undefined') turnstile.reset();
+        tsToken = null;
+        btn.disabled = false;
+        btn.querySelector('span').textContent = 'Submit Pendaftaran';
+        return false;
+      }
+    } catch(err) {
+      btn.disabled = false;
+      btn.querySelector('span').textContent = 'Submit Pendaftaran';
+      alert('Gagal menghubungi server. Coba lagi.');
+      return false;
+    }
+
+    // 4. Simpan data untuk badge
+    window._bNama    = document.querySelector('[name="entry.1511557657"]').value;
+    window._bSosmed  = document.querySelector('[name="entry.613166217"]').value;
+    window._bFursona = document.querySelector('[name="entry.1434883461"]').value;
+
+    // 5. Submit form ke Google Forms
+    sent = true;
+    btn.querySelector('span').textContent = 'Mengirim…';
+    document.getElementById('irsForm') 
+      ? document.getElementById('irsForm').submit()
+      : e.target.submit();
+
+    return false; // prevent default (we call submit manually)
+  }
+
+  function onDone() {
+    if (!sent) return;
+    var fursona = window._bFursona||'', nama = window._bNama||'—', sosmed = window._bSosmed||'—';
+    document.getElementById('badgeName').textContent = fursona||nama;
+    document.getElementById('badgeSosmed').textContent = sosmed;
+    document.getElementById('badgeId').textContent = 'IRS-' + String(Math.floor(1000+Math.random()*9000));
+    if (uploadedImgUrl) {
+      var bp = document.getElementById('badgePhoto');
+      bp.src = uploadedImgUrl; bp.style.display='block';
+      document.getElementById('badgeFallback').style.display='none';
+    }
+    document.getElementById('formSection').style.display='none';
+    document.getElementById('heroSection').style.display='none';
+    document.getElementById('countdownWrap').style.display='none';
+    document.getElementById('successSection').classList.add('on');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  /* ═══════════════════════════════════════════════
+     IMAGE UPLOAD (ImgBB)
+  ═══════════════════════════════════════════════ */
+  var IMGBB = '8effdf039381fcd8822a4dc7899ca34d';
+
+  function onFileChange(input) {
+    if (!input.files||!input.files[0]) return;
+    var f = input.files[0];
+    if (f.size > 32*1024*1024) { showUpErr('File terlalu besar. Maks 32MB.'); input.value=''; return; }
+    startUpload(f);
+  }
+  function startUpload(file) {
+    document.getElementById('upResult').classList.remove('show');
+    document.getElementById('upError').classList.remove('show');
+    uploading=true;
+    document.getElementById('uploadNote') && (document.getElementById('uploadNote').style.display='inline');
+    document.getElementById('upProgress').classList.add('show');
+    setProg(0,'Mengupload…');
+    var fd=new FormData(); fd.append('image',file);
+    var xhr=new XMLHttpRequest();
+    xhr.open('POST','https://api.imgbb.com/1/upload?key='+IMGBB);
+    xhr.upload.onprogress=function(e){if(e.lengthComputable)setProg(Math.round(e.loaded/e.total*90),'Mengupload…');};
+    xhr.onload=function(){
+      setProg(100,'Selesai');
+      try{
+        var r=JSON.parse(xhr.responseText);
+        if(r.success&&r.data&&r.data.url){
+          uploadedImgUrl=r.data.url;
+          document.getElementById('imgUrl').value=uploadedImgUrl;
+          document.getElementById('upThumb').src=r.data.thumb?r.data.thumb.url:r.data.url;
+          document.getElementById('upFname').textContent=file.name+' ('+fmtSz(file.size)+')';
+          document.getElementById('upResult').classList.add('show');
+          document.getElementById('upProgress').classList.remove('show');
+          uploading=false;
+        } else showUpErr('Upload gagal. Coba lagi.');
+      } catch(e){showUpErr('Kesalahan server ImgBB.');}
+    };
+    xhr.onerror=function(){showUpErr('Koneksi gagal.');};
+    xhr.send(fd);
+  }
+  function setProg(p,l){
+    document.getElementById('progBar').style.width=p+'%';
+    document.getElementById('progPct').textContent=p+'%';
+    document.getElementById('progStatus').textContent=l;
+  }
+  function showUpErr(m){
+    document.getElementById('upProgress').classList.remove('show');
+    var e=document.getElementById('upError'); e.textContent='⚠ '+m; e.classList.add('show');
+    uploading=false; document.getElementById('imgFile').value='';
+  }
+  function removeImg(){
+    uploadedImgUrl='';
+    document.getElementById('imgUrl').value='';
+    ['upResult','upError','upProgress'].forEach(function(id){document.getElementById(id).classList.remove('show');});
+    document.getElementById('imgFile').value='';
+  }
+  function fmtSz(b){if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(1)+' MB';}
+
+  var dz=document.getElementById('dropZone');
+  dz.addEventListener('dragover',function(e){e.preventDefault();dz.classList.add('drag');});
+  dz.addEventListener('dragleave',function(){dz.classList.remove('drag');});
+  dz.addEventListener('drop',function(e){
+    e.preventDefault();dz.classList.remove('drag');
+    var f=e.dataTransfer.files;
+    if(f&&f[0]&&f[0].type.match('image.*')) startUpload(f[0]);
+    else showUpErr('File harus berupa gambar.');
+  });
+
+  /* ═══════════════════════════════════════════════
+     SIDEBAR SCROLL
+  ═══════════════════════════════════════════════ */
+  function goTo(id){var el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+  var SECS=['s1','s2','s3'], items=document.querySelectorAll('.sb');
+  window.addEventListener('scroll',function(){
+    var y=window.scrollY+140, subEl=document.getElementById('s4');
+    if(subEl&&subEl.getBoundingClientRect().top<window.innerHeight*.75){
+      items.forEach(function(el,i){el.classList.toggle('active',i===3);});
+    } else {
+      var active=0;
+      SECS.forEach(function(id,i){var el=document.getElementB

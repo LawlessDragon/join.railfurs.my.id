@@ -215,9 +215,12 @@
     user_failed:    'Gagal membaca data akun. Coba lagi.',
     server_error:   'Terjadi kesalahan server. Coba beberapa saat lagi.',
     session_expired:'Sesi habis. Silakan login ulang.',
+    no_session:     'Sesi habis. Silakan login ulang.',
   };
   var params = new URLSearchParams(window.location.search);
   var err    = params.get('error');
+  // Bersihkan URL dari query error setelah dibaca
+  if (err) history.replaceState({}, document.title, '/');
   if (err && errors[err]) {
     var bar = document.getElementById('errorBar');
     bar.textContent = '⚠ ' + errors[err];
